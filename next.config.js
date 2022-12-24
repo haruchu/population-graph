@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+const path = require("path");
+
+module.exports = {
+  webpack5: true,
+  webpack(config) {
+    config.resolve.alias["@"] = path.join(__dirname, "src");
+    return config;
+  },
   reactStrictMode: true,
   swcMinify: true,
-}
-
-module.exports = nextConfig
+  eslint: {
+    dirs: ["src"],
+  },
+};
