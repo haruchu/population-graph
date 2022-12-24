@@ -13,4 +13,7 @@ module.exports = {
   eslint: {
     dirs: ["src"],
   },
+  env: {
+    API_KEY: process.env.API_KEY,
+  },
 };
