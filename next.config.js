@@ -12,5 +12,5 @@ module.exports = {
   swcMinify: true,
   eslint: {
     dirs: ["src"],
-  }
+  },
 };
