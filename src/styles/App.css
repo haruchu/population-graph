@@ -8,6 +8,14 @@ main {
   background-color: #ECF2FF;
 }
 
+.graph-wrapper {
+  width: 100%;
+  }
+
+  .graph-wrapper #highcharts-g71u6ti-2 {
+    height: 50%;
+  }
+
 .checkbox{
   min-width: 84px;
   border-radius: 10px;

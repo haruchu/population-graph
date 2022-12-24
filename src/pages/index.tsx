@@ -1,8 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useState } from "react";
 import { GetPrefecture } from "@/api/resas";
 import { Checkbox } from "@/components/checkbox";
-import { Graph } from "@/components/graph";
+import { Graph, HighchartsDataType } from "@/components/graph";
+import { makeStates } from "@/hooks/makeState";
 
 type PrefectureType = {
   prefCode: number;
@@ -14,10 +16,25 @@ type HomePageProps = {
 };
 
 const Home: NextPage<HomePageProps> = ({ prefData }) => {
-  const exampleData = [
-    { name: "test1", data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 6, 4, 3, 3] },
-    { name: "test1", data: [2, 5, 6, 8, 4, 2] },
-  ];
+  const [checkedPrefCodes, setCheckedPrefCodes] = useState<number[]>([]);
+  const [loadedPopDataCache, setLoadedPopDataCache] = useState(new Map<number, number[]>());
+
+  // usage
+  // チェックが入っている都道府県の人口データのみ取得して、グラフに反映する用のデータ作成
+  const graphData: HighchartsDataType[] = checkedPrefCodes
+    .map((code) => prefData.find((pref) => pref.prefCode === code))
+    .filter((pref): pref is PrefectureType => !!pref)
+    .map((pref) => ({
+      name: pref.prefName,
+      data: [...loadedPopDataCache.get(pref.prefCode)],
+    }));
+
+  const onChangeGraphData = (checked: boolean, prefCode: number) => {
+    makeStates(checked, prefCode, checkedPrefCodes, loadedPopDataCache).then((res) => {
+      setCheckedPrefCodes(res.newCheckedPrefCodes);
+      setLoadedPopDataCache(res.newLoadedPrefData);
+    });
+  };
 
   return (
     <>
@@ -28,12 +45,17 @@ const Home: NextPage<HomePageProps> = ({ prefData }) => {
       </Head>
 
       <main>
-        <Graph populationData={exampleData} />
+        <div className='graph-wrapper'>
+          <Graph populationData={graphData} />
+        </div>
         <ul className='prefLists'>
           {prefData?.map((item) => {
             return (
               <li key={item.prefCode} className='list'>
-                <Checkbox text={item.prefName} onChange={() => console.log(item.prefCode)} />
+                <Checkbox
+                  text={item.prefName}
+                  onChange={(isChecked) => onChangeGraphData(isChecked, item.prefCode)}
+                />
               </li>
             );
           })}
@@ -46,6 +68,7 @@ const Home: NextPage<HomePageProps> = ({ prefData }) => {
 export default Home;
 
 export async function getServerSideProps() {
+  // 都道府県checkboxの一覧を表示するため、都道府県の一覧を取得
   const prefArray = await GetPrefecture().then((data) => data);
   return { props: { prefData: prefArray || null } };
 }
