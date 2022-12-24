@@ -6,4 +6,28 @@ main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #ECF2FF;
+}
+
+.checkbox{
+  min-width: 84px;
+  border-radius: 10px;
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  background: #ECF2FF;
+}
+
+.checkbox:hover {
+  box-shadow: -2px -2px 4px #FFFFFF, 2px 2px 4px #C9CED9;
+}
+
+.checked,
+.checked:hover,
+.checkbox:active {
+  box-shadow: inset -4px -4px 12px #FFFFFF, inset 4px 4px 12px #C9CED9;
+}
+
+.not-checked {
+  box-shadow: -6px -6px 12px #FFFFFF, 6px 6px 12px #C9CED9;  border-radius: 8px;
 }
